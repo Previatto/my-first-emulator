@@ -3,6 +3,8 @@
 ## Objective
 
 Understand what you are building before writing any code.
+Then build the internal “hardware” of CHIP-8 purely in memory.
+
 
 ---
 
@@ -44,12 +46,6 @@ Once this internal machine behaves correctly, games will work automatically.
 
 ---
 
-
-## Goal of This Checkpoint
-
-Before running any ROMs, your goal is to build the internal “hardware” of CHIP-8 purely in memory.
-
----
 
 ## What CHIP-8 Originally Has
 
