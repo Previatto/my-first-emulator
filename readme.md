@@ -26,7 +26,6 @@ This project is intended for:
 
 - Developers comfortable with basic programming
 - Beginners curious about emulation or low-level systems
-- Students looking for a serious portfolio project
 - Developers who want to improve debugging discipline
 - Anyone who wants to build something “close to the metal”
 
@@ -49,7 +48,7 @@ A complete CHIP-8 interpreter featuring:
 - Full instruction set support
 - Documented compatibility decisions
 
-This is not a toy mockup. It is a real, working emulator.
+It is a real, working emulator.
 
 ---
 
@@ -70,7 +69,7 @@ Each stage builds on the previous one.
 
 ## Challenge Philosophy
 
-There are no strict rules — it is your emulator.  
+There are no strict rules, it is your emulator.  
 However, if your goal is genuine understanding, follow these principles:
 
 - Do not blindly copy third-party emulator code.
@@ -80,16 +79,14 @@ However, if your goal is genuine understanding, follow these principles:
 - Avoid using AI to generate implementation code.
 - If AI is used, restrict it to conceptual hints only.
 
-This project is most valuable when the struggle is real.
-
-Debugging subtle errors in arithmetic, collision detection, or timers is not frustration — it is the learning process.
+From the struggle will come hard knowledge.
 
 ---
 
 ## Recommended Workflow
 
 1. Read a checkpoint carefully.
-2. Implement only what it describes.
+2. Focus on what it describes.
 3. Validate using the provided test ROMs.
 4. Move forward only after confirming correctness.
 
@@ -100,8 +97,6 @@ Do not skip validation stages.
 ## Estimated Completion Time
 
 10–20 hours depending on experience.
-
-Stretch goals and extension ideas are included for those who want to go further (SUPER-CHIP, debugger mode, compatibility toggles, etc.).
 
 ---
 
