@@ -1,97 +1,124 @@
-My First Emulator – A Guided CHIP-8 Challenge
+# My First Emulator – A Guided CHIP-8 Challenge
 
-This project is a structured, language-agnostic challenge designed to guide developers through building their first emulator. The target platform is CHIP-8, a small interpreted system from the 1970s that is ideal for learning emulator architecture without overwhelming complexity.
+From Zero to Emulator
 
-The goal is not merely to “make it run,” but to understand:
+This project is a structured, language-agnostic challenge designed to guide you through building a CHIP-8 emulator from scratch. CHIP-8 is a small interpreted system from the 1970s — simple enough to understand fully, but complex enough to teach real emulator architecture.
 
-How a virtual machine works
+The objective is not just to “make a game run.”  
+The objective is to understand what is happening at every level.
 
-How instructions are decoded
+By the end of this challenge, you will know:
 
-How control flow is implemented
+- How a virtual machine executes instructions
+- How opcodes are decoded and dispatched
+- How control flow and subroutines work
+- How bit-level graphics rendering functions
+- How small implementation mistakes break real programs
+- Why correctness matters in emulation
 
-How graphics are rendered at the bit level
+When complete, you will have a fully working CHIP-8 emulator capable of running classic ROMs such as Pong, Tetris, and Arkanoid.
 
-How subtle implementation errors break real programs
+---
 
-By the end of this challenge, you will have a fully working CHIP-8 emulator capable of running classic ROMs such as Pong, Tetris, and Arkanoid.
-
-Target Audience
+## Who This Is For
 
 This project is intended for:
 
-Developers comfortable with basic programming
+- Developers comfortable with basic programming
+- Beginners curious about emulation or low-level systems
+- Students looking for a serious portfolio project
+- Developers who want to improve debugging discipline
+- Anyone who wants to build something “close to the metal”
 
-Individuals curious about emulation or systems design
+You are **not** expected to know CPU architecture beforehand.  
+The checkpoints guide you step-by-step from memory handling to full compatibility.
 
-Students wanting a structured, realistic systems project
+---
 
-Developers who want to improve debugging discipline
+## What You Will Build
 
-You are not expected to know CPU architecture in advance. The checkpoints will guide you incrementally.
+A complete CHIP-8 interpreter featuring:
 
-What You Will Build
+- 4KB of memory
+- 16 general-purpose 8-bit registers
+- Index register and program counter
+- Stack and subroutine support
+- 64×32 monochrome display
+- 16-key hexadecimal keypad
+- Delay and sound timers (60Hz)
+- Full instruction set support
+- Documented compatibility decisions
 
-A CHIP-8 interpreter with:
+This is not a toy mockup. It is a real, working emulator.
 
-4K memory
+---
 
-16 general-purpose 8-bit registers
+## How the Project Is Structured
 
-Stack and subroutine support
+The repository is organized for guided progression:
 
-64×32 monochrome display
+- `/checkpoints` → Incremental development stages (language-agnostic)
+- `/docs` → Architecture explanations and compatibility notes
+- `/solutions` → Reference implementations (Python included)
+- `/test-roms` → Validation ROMs for graphics, timers, collision, sound
 
-16-key hexadecimal keypad
+You are strongly encouraged to complete the checkpoints in order.
 
-Delay and sound timers (60Hz)
+Each stage builds on the previous one.
 
-Full instruction support
+---
 
-Compatibility considerations
+## Challenge Philosophy
 
-How the Project Is Structured
+There are no strict rules — it is your emulator.  
+However, if your goal is genuine understanding, follow these principles:
 
-The repository contains:
+- Do not blindly copy third-party emulator code.
+- If something breaks, investigate it properly.
+- Avoid “patching until it works.”
+- Consult official CHIP-8 documentation before looking for solutions.
+- Avoid using AI to generate implementation code.
+- If AI is used, restrict it to conceptual hints only.
 
-/checkpoints → Development stages (language-agnostic)
+This project is most valuable when the struggle is real.
 
-/docs → Architecture explanations and compatibility notes
+Debugging subtle errors in arithmetic, collision detection, or timers is not frustration — it is the learning process.
 
-/solutions → Reference implementations (Python included)
+---
 
-/test-roms → ROMs for validation
+## Recommended Workflow
 
-You are expected to follow the checkpoints in order.
+1. Read a checkpoint carefully.
+2. Implement only what it describes.
+3. Validate using the provided test ROMs.
+4. Move forward only after confirming correctness.
 
-Challenge Guidelines
+Do not skip validation stages.
 
-There are no strict rules — this is your project, and you are free to approach it in any way you choose. However, the following guidelines are strongly recommended if your goal is to truly understand how emulators work:
+---
 
-Do not copy third-party emulator code blindly. Reading other implementations can be educational, but copying them defeats the purpose of the challenge.
-
-If something breaks, investigate it. Emulator bugs are often subtle. Avoid “patching until it works.” Instead, understand why it failed.
-
-Avoid using AI to generate implementation code. The objective is to build the reasoning yourself.
-
-When in doubt, consult the CHIP-8 specification and documentation rather than searching for complete solutions.
-
-If you choose to use AI for support, restrict it to conceptual hints only. Do not request or accept direct code solutions.
-
-This challenge is most valuable when the struggle is genuine. The debugging process is part of the learning experience.
-
-Recommended Workflow
-
-Read a checkpoint.
-
-Focus on what that checkpoint describes.
-
-Test with provided ROMs.
-
-Proceed to the next stage only after validation.
-
-Estimated Completion Time
+## Estimated Completion Time
 
 10–20 hours depending on experience.
 
-Stretch goals are provided for further exploration.
+Stretch goals and extension ideas are included for those who want to go further (SUPER-CHIP, debugger mode, compatibility toggles, etc.).
+
+---
+
+## Why This Project Matters
+
+Most developers write applications.  
+Few build machines that run other programs.
+
+After this project, you will understand:
+
+- Instruction cycles
+- Memory models
+- Bitwise graphics
+- Timing constraints
+- Emulator correctness trade-offs
+
+This is a foundational systems project.
+
+It is called “My First Emulator.”  
+It can also be yours.
