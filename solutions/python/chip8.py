@@ -4,7 +4,7 @@ from sys import exception
 
 class chip8:
     def __init__(self) -> None:
-        self.ram = [int(0) for x in range(512 + 4096)]  # 4096 bytes
+        self.ram = [int(0) for x in range(4096)]  # 4096 bytes
         self.registers = [int(0) for x in range(16)]  # 8-bit registers (V0–VF)
         self.I_register = int(0)
         self.program_counter = int(0x200)
@@ -353,11 +353,6 @@ class chip8:
 
         self.decode(self.instruction)
 
-        # if self.program_counter % 2 != 0:
-        #     self.info()
-        #     raise
-
-        # self.display()
 
     def stack_push(self, value):
         # If len(self.stack) >= 16 → error
@@ -372,6 +367,4 @@ class chip8:
     def read_ram(self):
         reading1 = self.ram[self.program_counter]
         reading2 = self.ram[self.program_counter + 1]
-        # if self.program_counter >= 512 + 4096:
-        #     self.program_counter = 0x200
         return (reading1 << 8) | reading2
