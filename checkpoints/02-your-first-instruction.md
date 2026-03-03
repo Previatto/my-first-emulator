@@ -1,77 +1,114 @@
-Checkpoint 02 – Decode Structure and First Instructions
+# Checkpoint 02 – Decode Structure and First Instructions
 
-Objective
+## Objective
+
 Build the structure that interprets instructions.
 
 You will now convert raw 16-bit numbers into actions.
 
-Step 1 – Extract Instruction Parts
+At this stage, your emulator stops being a memory reader and becomes a programmable machine.
 
-Given a 16-bit instruction, you must extract:
+---
 
-First nibble (instruction group)
-instruction >> 12
+## Step 1 – Extract Instruction Parts
 
-Second nibble (X)
-(instruction >> 8) & 0xF
 
-Third nibble (Y)
-(instruction >> 4) & 0xF
+If you haven't by now, you should really pay a visit to [Cowgod's Chip-8 Technical Reference v1.0](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)!
 
-Last nibble (N)
-instruction & 0xF
+As you might have recall, the loop of the emulator will something like:
 
-Last two hex digits (NN)
-instruction & 0xFF
+        read two bytes from memory at PC
+        combine them into one instruction
+        increase PC by 2
+        decode the instruction <- we are here
+        execute the instruction
 
-Last three hex digits (NNN)
-instruction & 0x0FFF
+It is more simple than you think, each instruction, `0x13A5` for example, can be decoded in a set of parametrized actions.
 
-These fields determine what the instruction does.
+You just need to extract the information from them. Think of them as a function call and its arguments, but in a very tight manner.
 
-Step 2 – Dispatch by First Nibble
+Your code could have a function like:
 
-Most CHIP-8 instructions can be grouped by their first nibble.
+sum(a, b) -> a + b
 
-Conceptually:
+the function `sum` and its two argument `a` and `b`. `a + b` defines what the function outputs.
 
-group = instruction >> 12
 
-Then call the correct handler based on this group.
 
-Do not implement everything yet.
+Now, let's examine the instruction `0x13A5`:
 
-For now, implement only:
+For chip-8 you need to check the first nibble first thing:
 
-1NNN – Jump
-6XNN – Set register
+**First nibble (instruction group)**  
 
-Instruction: 1NNN (Jump)
+`0x13A5 >> 12 = 1`
 
-Behavior:
+The first nibble indentify the type of instruction, and on [Cowgod's Chip-8 Technical Reference v1.0](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM), this instruction is defined as:
+
+>*1nnn - JP addr*
+>
+>Jump to location nnn.
+>
+>The interpreter sets the program counter to nnn.
+
+so it is like this funtion was:
+
+`move_program_counter(x) -> program_counter = x`
+
+
+So now we know we need to extract arguments of the instruction, the nnn, the last three digits:
+
+**Last three hex digits (NNN)**  
+
+`0x13A5 & 0x0FFF = 3A5`
+
+We then set the program counter to 0x3A5.
+
+That is it, your first instruction.
+
+
+---
+
+## Instruction: 1NNN (Jump)
+
+**Behavior:**
+
 
 PC = NNN
 
+
 This overrides normal sequential execution.
 
-Remember:
+Important detail:
 
-PC was already incremented during fetch.
-You are now replacing it.
+- PC was already incremented during fetch.
+- You are now replacing it.
 
-Instruction: 6XNN (Set Register)
+If you forget this, execution flow will break.
 
-Behavior:
+---
+
+## Instruction: 6XNN (Set Register)
+
+**Behavior:**
+
 
 VX = NN
 
-Where X is the second nibble.
 
-Registers are 8-bit. Values must stay between 0 and 255.
+Where `X` is the second nibble.
 
-Minimal Execution Loop
+Registers are 8-bit.  
+Values must stay between 0 and 255.
+
+Just a simple assignment.
+
+---
+
+## Minimal Execution Loop
 
 You can now build a real loop:
+
 
 loop:
 fetch instruction
@@ -79,56 +116,47 @@ increment PC by 2
 decode instruction
 execute behavior
 
-At this stage, execution is very limited — that is expected.
 
-Validation
+---
 
-Create a small test program manually:
+## Validation
 
-Example sequence:
+Use the `rom_loading_test.ch8` again to check that:
 
-600A ; V0 = 10
-6105 ; V1 = 5
-1200 ; jump to 0x200
 
-This should:
+- It set registers
+- Loops infinitely
 
-Set registers
 
-Loop infinitely
+Registers 0 to 3 are loaded with values 10 to 13
 
-Confirm:
+Program counter keeps returning to the beggining
 
-Registers update correctly
 
-PC jumps properly
+---
 
-No misalignment occurs
+## Common Mistakes
 
-Common Mistakes
+- Forgetting that PC already incremented
+- Modifying PC incorrectly during jump
+- Dispatching only by first nibble without validating full opcode pattern
+- Ignoring unknown instructions silently
 
-Forgetting that PC already incremented
+If an instruction is not implemented:
 
-Modifying PC incorrectly during jump
-
-Using only first nibble without validating full opcode pattern
-
-Ignoring unknown instructions silently
-
-If an instruction is not implemented, print an error and stop execution.
+- Print an error
+- Stop execution
 
 Silent failure makes debugging significantly harder.
 
-Checkpoint complete when:
+---
 
-Instructions are decoded reliably
+## Checkpoint Complete When
 
-1NNN correctly changes PC
+- Instructions are decoded reliably
+- `1NNN` correctly changes PC
+- `6XNN` correctly modifies registers
+- Execution loop runs without crashing
+- Unknown opcodes are detected explicitly
 
-6XNN correctly modifies registers
-
-Execution loop runs without crashing
-
-Unknown opcodes are detected explicitly
-
-Once this works, you have built a minimal programmable virtual machine.
+At this point, you have built a minimal programmable virtual machine.
