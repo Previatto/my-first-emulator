@@ -2,9 +2,8 @@
 
 From Zero to Emulator
 
-This project is a structured, language-agnostic challenge designed to guide you through building a CHIP-8 emulator from scratch. CHIP-8 is a small interpreted system from the 1970s — simple enough to understand fully, but complex enough to teach real emulator architecture.
+This project is a structured, language-agnostic challenge designed to guide you through building a CHIP-8 emulator from scratch. CHIP-8 is a small interpreted system from the 1970s (think of Pong!): simple enough to understand fully, but complex enough to be rewarding.
 
-The objective is not just to “make a game run.”  
 The objective is to understand what is happening at every level.
 
 By the end of this challenge, you will know:
@@ -56,10 +55,10 @@ It is a real, working emulator.
 
 The repository is organized for guided progression:
 
-- `/checkpoints` → Incremental development stages (language-agnostic)
-- `/docs` → Architecture explanations and compatibility notes
+- `/checkpoints` → Incremental development stages (language-agnostic) (WIP)
+- `/docs` → Architecture explanations and compatibility notes (WIP)
 - `/solutions` → Reference implementations (Python included)
-- `/test-roms` → Validation ROMs for graphics, timers, collision, sound
+- `/test-roms` → Validation ROMs for graphics, timers, collision, sound (WIP)
 
 You are strongly encouraged to complete the checkpoints in order.
 
@@ -81,16 +80,6 @@ However, if your goal is genuine understanding, follow these principles:
 
 From the struggle will come hard knowledge.
 
----
-
-## Recommended Workflow
-
-1. Read a checkpoint carefully.
-2. Focus on what it describes.
-3. Validate using the provided test ROMs.
-4. Move forward only after confirming correctness.
-
-Do not skip validation stages.
 
 ---
 
@@ -112,8 +101,6 @@ After this project, you will understand:
 - Bitwise graphics
 - Timing constraints
 - Emulator correctness trade-offs
-
-This is a foundational systems project.
 
 It is called “My First Emulator.”  
 It can also be yours.
