@@ -4,8 +4,7 @@
 
 Load a ROM into memory and implement correct instruction fetching.
 
-You are not executing instructions yet.  
-You are preparing the system to read them correctly.
+No instruction executing yet, but you are preparing the system to read them correctly.
 
 ---
 
@@ -34,10 +33,12 @@ When loading a ROM:
 
 Conceptually:
 
-
 memory[0x200] = first byte of ROM
+
 memory[0x201] = second byte
+
 memory[0x202] = third byte
+
 ...
 
 
@@ -65,22 +66,20 @@ The instruction will be the combination of the two bytes:
 
 (first_byte << 8) | second_byte
 
-This notation means that we are shifting `first_byte` by 8 bits (1 byte) and doing an OR operation.
+This notation means that we are shifting (the << operator) `first_byte` by 8 bits (1 byte) and doing an OR (the | operator) operation.
 
 In decimal notaion, it would be similar to:
 
-Read first_byte = 25
-Read second_byte = 10
+-Read first_byte = 25
+-Read second_byte = 10
 
 instruction = 25 x 10 + 10 = 2510
 
-We are just multiplying the `first_byte` so that we can sum join it with `second_byte`.
+We are just multiplying the `first_byte` so that we can join it with `second_byte`.
 
-After fetching:
+After fetching, increment PC by 2:
 
 PC = PC + 2
-
-The increment happens **after** reading the instruction.
 
 ---
 
@@ -89,6 +88,7 @@ The increment happens **after** reading the instruction.
 If memory contains:
 
 Address 0x200 → 0x60
+
 Address 0x201 → 0x01
 
 The instruction is:
@@ -99,7 +99,7 @@ Not:
 
 0x0160
 
-And definetely not 0x61!!
+And definetely, not 0x61!!
 
 ---
 
@@ -120,7 +120,7 @@ This is purely about verifying memory alignment and fetch correctness.
 
 To confirm correctness:
 
-- Load the rom_loading_text.ch8
+- Load the `rom_loading_text.ch8`
 - Verify that your loop prints:
       `60 0A`
       `61 0B`

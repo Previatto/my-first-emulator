@@ -75,6 +75,49 @@ A basic CHIP-8 system contains:
 
 ---
 
+## Glossary
+
+First, get used to some terms:
+
+**Byte**  
+A number between 0 and 255 (8 bits).
+
+**Bit**  
+A single binary digit (0 or 1).
+
+**Address**  
+A position in memory.
+
+**Opcode**  
+The numeric instruction that tells the system what to do.  
+Example: `0x6A0F`
+
+**Nibble**  
+4 bits (half a byte). Many CHIP-8 instructions are divided into 4 nibbles.
+
+**Hexadecimal**  
+Base-16 number system using digits `0–9` and `A–F`.
+
+The decimal number 10 corresponds to A.
+The decimal number 15 corresponds to F.
+The decimal number 16 corresponds to 10.
+
+Try to learn the basics on how hexadecimal works, but you can use any calculator to translate between decimal and hexadecimal values!!
+
+They will appear with this `0x` in front of them.
+
+Examples:
+- `0xFF` = 255 in decimal
+- `0x200` = 512 in decimal
+
+Hexadecimal is used because memory and binary values map cleanly into base 16.
+
+You will understand when we start reading the instructions.
+
+It is much easier to remember and read 0x603C than `01100000 00111100`.
+
+---
+
 ## Translating Hardware to Code (Conceptual)
 
 Here are suggestions on how to simulate the hardware parts of the Chip-8:
@@ -152,35 +195,6 @@ This cycle is the core of your emulator.
 
 ---
 
-## Glossary
-
-**Byte**  
-A number between 0 and 255 (8 bits).
-
-**Bit**  
-A single binary digit (0 or 1).
-
-**Address**  
-A position in memory.
-
-**Opcode**  
-The numeric instruction that tells the system what to do.  
-Example: `0x6A0F`
-
-**Nibble**  
-4 bits (half a byte). Many CHIP-8 instructions are divided into 4 nibbles.
-
-**Hexadecimal**  
-Base-16 number system using digits `0–9` and `A–F`.
-
-Examples:
-- `0xFF` = 255 in decimal
-- `0x200` = 512 in decimal
-
-Hexadecimal is used because memory and binary values map cleanly into base 16.
-You will understand when we start reading the instructions.
-
----
 
 ## Checkpoint Complete When
 

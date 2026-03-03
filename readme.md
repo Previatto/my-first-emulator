@@ -4,8 +4,6 @@ From Zero to Emulator
 
 This project is a structured, language-agnostic challenge designed to guide you through building a CHIP-8 emulator from scratch. CHIP-8 is a small interpreted system from the 1970s (think of Pong!): simple enough to understand fully, but complex enough to be rewarding.
 
-The objective is to understand what is happening at every level.
-
 By the end of this challenge, you will know:
 
 - How a virtual machine executes instructions
@@ -15,7 +13,7 @@ By the end of this challenge, you will know:
 - How small implementation mistakes break real programs
 - Why correctness matters in emulation
 
-When complete, you will have a fully working CHIP-8 emulator capable of running classic ROMs such as Pong, Tetris, and Arkanoid.
+When complete, you will have a fully working CHIP-8 emulator capable of running classic ROMs such as Pong and Arkanoid.
 
 ---
 
