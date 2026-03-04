@@ -1,134 +1,174 @@
-Checkpoint 03 – Stack and Subroutines
+# Checkpoint 03 – Stack and Subroutines
 
-Objective
+## Objective
+
 Implement subroutine calls and returns using a stack.
 
-You are now adding controlled control-flow, not just jumps.
+You are now adding structured control flow — not just jumps.
 
-What You Should Already Have
+---
 
-Working memory
+## What You Should Already Have
 
-Working PC
+Before starting this checkpoint, you should have:
 
-Working fetch–decode–execute loop
-
-16 registers
-
-Jump instruction (1NNN)
+- Working memory
+- Working program counter (PC)
+- Working fetch–decode–execute loop
+- 16 general-purpose registers
+- Working `1NNN` (jump instruction)
+- Working `6XNN` (assign instruction)
 
 Now you will implement:
 
-2NNN (call subroutine)
+- `2NNN` (call subroutine)
+- `00EE` (return from subroutine)
+- Make sure you have a functioning stack
 
-00EE (return from subroutine)
+---
 
-A functioning stack
-
-What Is a Subroutine?
+## What Is a Subroutine?
 
 A subroutine is a reusable block of code.
 
-When you “call” a subroutine:
+When you call a subroutine:
 
-Save the current execution location.
-
-Jump to another address.
-
-Execute code there.
-
-Return to the original location.
+1. Save the current execution location.
+2. Jump to another address.
+3. Execute code there.
+4. Return to the original location.
 
 The stack exists to remember where to return.
 
-What You Need to Implement
+1. PC is at 0x204
+2. Reads 2305
+3. PC = PC + 2
+4. Decode instruction 2305:
+    5. Save PC position, 0x206, into stack, stack = [0x206]
+    6. Move PC to 0x304
+    7. Read and execute the instructions from then on...
+8. In case a instruction 00EE is read, read the top of the stack, 0x206 in our example
+9. Assign 0x206 to PC
+10. Read and execute the instructions from then on...
 
-Stack
 
-Maximum depth: 16 levels
+Without a stack, you cannot safely nest subroutine calls.
 
-Stores return addresses
+---
 
-You may optionally track a stack pointer
+## What You Need to Implement
 
-Instruction: 2NNN (Call)
+### Stack
 
-Behavior:
+- Maximum depth: 16 levels
+- Stores return addresses
+- May use a stack pointer (optional but recommended)
 
-Push current PC onto the stack.
-Set PC = NNN.
+The stack holds **addresses**, not instructions.
+
+---
+
+## Instruction: `2NNN` (Call Subroutine)
+
+**Behavior:**
+
+1. Push current PC onto the stack.
+2. Set `PC = NNN`.
 
 Important detail:
 
-Because PC was already incremented after fetch, the value you push must be the correct return address (the next instruction to execute after return).
+PC was already incremented during fetch.
 
-Instruction: 00EE (Return)
+Therefore, the value you push must be the correct return address: the next instruction to execute after the subroutine finishes.
 
-Behavior:
+If you push the wrong address, execution will resume incorrectly.
 
-Pop address from stack.
-Set PC to that address.
+---
 
-Mental Model
+## Instruction: `00EE` (Return)
 
-Main program at 0x200:
+**Behavior:**
 
-200: 220A ; Call subroutine at 0x20A
-202: 6001 ; Continue here after return
+1. Pop address from stack.
+2. Set `PC` to that address.
 
-Subroutine:
+Do not increment PC again after returning.
 
-20A: 6005
-20C: 00EE ; Return
+You are restoring execution state exactly.
 
-Execution flow:
+---
 
+## Validation
+
+Use the rom `subroutines.ch8`
+
+Expected final state:
+
+V0 = 0x01
+
+V1 = 0x02
+
+PC stuck at 0x202
+
+Stack empty
+
+
+I highly recommend that you print all your system variables (maybe not RAM) at each iteration, and make sure that:
+
+200: 2208.__
 Push 0x202
+Jump to 0x208
 
-Jump to 0x20A
+208: 6001.__
+V0 = 1
 
-Execute subroutine
+20A: 2210.__
+Push 0x20C
+Jump to 0x210
 
-Pop 0x202
+210: 6102.__
+V1 = 2
 
-Resume execution
+212: 00EE.__
+Pop → 0x20C
 
-Validation
+20C: 00EE.__
+Pop → 0x202
 
-Create a small test ROM:
+202: 1202.__
+Infinite loop
 
-Set a register inside subroutine
 
-Return
+---
 
-Confirm execution continues correctly
+## Common Mistakes
 
-Test nested calls if possible.
+- Forgetting PC was already incremented before call
+- Pushing incorrect return address
+- Stack overflow (more than 16 nested calls)
+- Stack underflow (return without call)
+- Incrementing PC after return incorrectly
 
-Common Mistakes
+Do not silently ignore stack errors.
 
-Forgetting PC was already incremented
+If:
 
-Pushing incorrect return address
+- Stack exceeds 16 levels → print error and stop
+- Return occurs with empty stack → print error and stop
 
-Stack overflow (more than 16 calls)
+Silent corruption makes debugging extremely difficult.
 
-Stack underflow (return without call)
+---
 
-Not handling invalid return gracefully
+## Checkpoint Complete When
 
-Do not silently ignore stack errors. Print an error and stop execution.
+- `2NNN` correctly pushes and jumps
+- `00EE` correctly restores PC
+- Nested calls work
+- Stack never exceeds 16 levels
+- Return resumes exactly where expected
+- Stack errors are detected explicitly
 
-Checkpoint Complete When
+At this point, you now have structured control flow.
 
-2NNN correctly pushes and jumps
-
-00EE correctly restores PC
-
-Nested calls work
-
-Stack never exceeds 16 levels
-
-Return resumes exactly where expected
-
-You now have structured control flow.
+Your emulator can execute reusable program logic.

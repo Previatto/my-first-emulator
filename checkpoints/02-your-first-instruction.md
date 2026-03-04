@@ -56,7 +56,7 @@ so it is like this funtion was:
 `move_program_counter(x) -> program_counter = x`
 
 
-So now we know we need to extract arguments of the instruction, the nnn, the last three digits:
+Now we know we need to extract arguments of the instruction, the nnn, the last three digits:
 
 **Last three hex digits (NNN)**  
 
@@ -81,41 +81,55 @@ This overrides normal sequential execution.
 
 Important detail:
 
-- PC was already incremented during fetch.
-- You are now replacing it.
+- The current value of PC is irrelevant, as you will replace it.
+- Be sure that the increment of +2 happened before the decode step
 
-If you forget this, execution flow will break.
+
 
 ---
 
 ## Instruction: 6XNN (Set Register)
 
+
 **Behavior:**
 
+This instruction is used to assign a value to a register.
+
+You need to extract X and NN from the instruction, check `chk02-extracting-opcode-values.md` if you are having trouble with the bit extractions.
+
+X is the register indicator
+
+NN is the value to assign to it, overwrite:
 
 VX = NN
 
+Remember: Registers are 8-bit.  
+The final values must stay between 0 and 255.
 
-Where `X` is the second nibble.
-
-Registers are 8-bit.  
-Values must stay between 0 and 255.
-
-Just a simple assignment.
+Right now it is impossible to assign a value higher than 255 (FF in hex), but later it could happen.
 
 ---
 
 ## Minimal Execution Loop
 
-You can now build a real loop:
+You can now build *the* real loop:
 
 
-loop:
-fetch instruction
-increment PC by 2
-decode instruction
-execute behavior
+        loop:
+                fetch instruction
+                increment PC by 2
+                decode instruction
+                execute behavior
 
+                                
+Hint:
+
+If an instruction is not implemented:
+
+- Print an error and Stop execution
+- Print a warning that instruction XYZ is not implemented
+
+Silent failure makes debugging significantly harder.
 
 ---
 
@@ -142,12 +156,6 @@ Program counter keeps returning to the beggining
 - Dispatching only by first nibble without validating full opcode pattern
 - Ignoring unknown instructions silently
 
-If an instruction is not implemented:
-
-- Print an error
-- Stop execution
-
-Silent failure makes debugging significantly harder.
 
 ---
 
