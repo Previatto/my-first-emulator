@@ -115,27 +115,27 @@ Stack empty
 
 I highly recommend that you print all your system variables (maybe not RAM) at each iteration, and make sure that:
 
-200: 2208.__
+200: 2208.  
 Push 0x202
 Jump to 0x208
 
-208: 6001.__
+208: 6001.  
 V0 = 1
 
-20A: 2210.__
-Push 0x20C
+20A: 2210.  
+Push 0x20C.  
 Jump to 0x210
 
-210: 6102.__
+210: 6102.  
 V1 = 2
 
-212: 00EE.__
+212: 00EE.  
 Pop → 0x20C
 
-20C: 00EE.__
+20C: 00EE.  
 Pop → 0x202
 
-202: 1202.__
+202: 1202.  
 Infinite loop
 
 
