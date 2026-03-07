@@ -1,112 +1,221 @@
-Checkpoint 04 – Conditional Execution (Skip Instructions)
+# Checkpoint 04 – Conditional Execution (Skip Instructions)
 
-Objective
+## Objective
+
 Implement conditional branching using skip instructions.
 
-These instructions allow the program to decide what to execute next.
+Unlike jumps, CHIP-8 commonly changes flow by **skipping the next instruction** if a condition is true.
 
-Concept of “Skip”
 
-Instead of jumping somewhere else, CHIP-8 often skips the next instruction.
+---
 
-Because each instruction is 2 bytes:
+## The Concept of “Skip”
 
-Skipping means:
+Remember: Each CHIP-8 instruction is 2 bytes.
 
-PC = PC + 2
+If a condition is true:
 
-This happens only if a condition is true.
-
-Instructions to Implement
-
-3XNN – Skip if VX == NN
-4XNN – Skip if VX != NN
-5XY0 – Skip if VX == VY
-9XY0 – Skip if VX != VY
-
-Behavior Details
-
-If condition is true:
 
 PC = PC + 2
 
-If false:
 
-Do nothing (normal flow continues)
+Because the PC was already incremented during fetch, a successful skip moves execution forward by 4 bytes total from the original instruction.
 
-Remember:
+If the condition is false:
 
-PC was already incremented after fetch.
+Do nothing. Execution continues normally.
 
-So a successful skip advances PC by 4 total from original instruction location.
+---
 
-Important Validation Rule
+## Instructions to Implement
 
-5XY0 and 9XY0 are only valid when the last nibble is 0.
+### 3XNN – Skip if VX == NN
+
+If:
+
+VX == NN
+
+Then:
+
+PC += 2
+
+
+---
+
+### 4XNN – Skip if VX != NN
+
+If:
+
+VX != NN
+
+Then:
+
+PC += 2
+
+
+---
+
+### 5XY0 – Skip if VX == VY
+
+If:
+
+VX == VY
+
+Then:
+
+PC += 2
+
+
+Important:
+This instruction is valid **only if the last nibble is 0**.
 
 Example:
 
 0x5230 → valid
 0x5231 → invalid
 
-Validate full opcode pattern, not just first nibble.
 
-Mental Example
+You must validate the entire opcode pattern.
 
-If memory contains:
+---
+
+### 9XY0 – Skip if VX != VY
+
+If:
+
+VX != VY
+
+Then:
+
+PC += 2
+
+
+Also valid only if the last nibble is 0.
+
+---
+
+## Implementation Pattern
+
+For each skip instruction:
+
+1. Extract required nibbles (X, Y, NN).
+2. Evaluate the condition.
+3. If true → `PC += 2`
+4. If false → do nothing.
+
+
+---
+
+## Mental Example
+
+Memory:
+
 
 200: 6005 ; V0 = 5
 202: 3005 ; Skip if V0 == 5
 204: 6101 ; V1 = 1
 206: 6102 ; V1 = 2
 
-Because V0 == 5:
 
-Instruction at 204 is skipped.
-V1 becomes 2.
+Execution:
 
-Validation
+- V0 becomes 5.
+- Condition at 202 is true.
+- Instruction at 204 is skipped.
+- V1 becomes 2.
 
-Write a small ROM that:
+Final result:
 
-Sets registers
+V0 = 5
+V1 = 2
 
-Uses equality and inequality skips
 
-Verifies correct instruction flow
+---
 
-Test both true and false cases.
+## Test ROM (Covers All Skip Types)
 
-Common Mistakes
+You can use the test rom `conditional_instructions.ch8`.
 
-Skipping even when condition is false
+### Expected Final Register State
 
-Forgetting that PC already incremented
 
-Incorrect nibble extraction
+V0 = 5
+V1 = 5
+V2 = 3
+V3 = 2
+V4 = 1
+V5 = 2
+V6 = 2
 
-Not validating final nibble for 5XY0 and 9XY0
 
-Silent acceptance of malformed opcodes
+If any value differs, your skip logic is incorrect.
 
-Checkpoint Complete When
 
-All four skip instructions work correctly
+If you are curious, this is the code for rom `conditional_instructions.ch8`:
 
-PC increments exactly as expected
+; ===== Setup =====
+200: 6005 ; V0 = 5
+202: 6105 ; V1 = 5
+204: 6203 ; V2 = 3
 
-Invalid opcode patterns are detected
+; ===== 3XNN (true case) =====
+206: 3005 ; Skip if V0 == 5 (true)
+208: 6301 ; V3 = 1 (should be skipped)
+20A: 6302 ; V3 = 2
 
-Branching logic behaves predictably
+; ===== 4XNN (false case) =====
+20C: 4005 ; Skip if V0 != 5 (false)
+20E: 6401 ; V4 = 1
 
-At this point, your emulator supports:
+; ===== 5XY0 (true case) =====
+210: 5010 ; Skip if V0 == V1 (true)
+212: 6501 ; V5 = 1 (should be skipped)
+214: 6502 ; V5 = 2
 
-Sequential execution
+; ===== 9XY0 (true case) =====
+216: 9020 ; Skip if V0 != V2 (true, 5 != 3)
+218: 6601 ; V6 = 1 (should be skipped)
+21A: 6602 ; V6 = 2
 
-Jumps
+; ===== Loop =====
+21C: 121C ; Infinite loop
 
-Subroutine calls
 
-Conditional branching
+You would have to save it and compile it for chip-8, so we are skipping it for now.
 
-You now have a fully functional control flow system.
+---
+
+## Critical Validation Rules
+
+You must:
+
+- Ensure `5XY0` only executes when last nibble is 0
+- Ensure `9XY0` only executes when last nibble is 0
+- Detect and reject malformed opcodes
+- Not skip when condition is false
+- Not increment PC twice accidentally
+
+If opcode is malformed:
+Print error and halt execution.
+
+Silent failure makes debugging extremely difficult.
+
+---
+
+
+## Checkpoint Complete When
+
+- All four skip instructions behave correctly
+- PC advances exactly as expected
+- Invalid opcode patterns are rejected
+- True and false cases behave predictably
+- Nested skips work properly
+
+At this stage, your emulator now supports:
+
+- Sequential execution
+- Jumps
+- Subroutine calls
+- Conditional branching
+
+You now have a complete and functional control flow system.

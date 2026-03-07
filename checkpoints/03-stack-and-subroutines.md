@@ -18,6 +18,7 @@ Before starting this checkpoint, you should have:
 - 16 general-purpose registers
 - Working `1NNN` (jump instruction)
 - Working `6XNN` (assign instruction)
+- Working `BNNN` (jump with offset)
 
 Now you will implement:
 

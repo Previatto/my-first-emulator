@@ -3,9 +3,8 @@ import tkinter as tk
 from array import array
 from tkinter import filedialog
 
-import pygame
-
 import chip8
+import pygame
 
 pixel_color = pygame.Color("green1")
 key_lookup = {
@@ -108,7 +107,7 @@ while running:
 
     emul.loop()
     pygame.display.flip()
-
+    emul.info()
     clock.tick(60)  # limits FPS to 60
 
 pygame.quit()

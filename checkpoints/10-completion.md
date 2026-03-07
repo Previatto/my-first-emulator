@@ -1,10 +1,18 @@
 Checkpoint 10 – Robustness and Compatibility
 
 Objective
-Harden the emulator and ensure predictable behavior.
+Add the last instructions and improve predictability/code robustness
 
 Scope
 
+
+Mention: 0nnn - SYS addr: 0nnn - SYS addr
+"Jump to a machine code routine at nnn.
+This instruction is only used on the old computers on which Chip-8 was originally implemented. It is ignored by modern interpreters."
+
+
+
+Then:
 Detect unknown opcodes explicitly.
 
 Validate full opcode patterns.

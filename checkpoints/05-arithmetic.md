@@ -1,97 +1,281 @@
-Checkpoint 05 – Arithmetic and Logic Unit (ALU)
+# Checkpoint 05 – Arithmetic and Logic Unit (ALU)
 
-Objective
+## Objective
+
 Implement full 8-bit arithmetic and logical operations, including correct flag behavior.
 
-Overview
+At this stage, your emulator moves from control flow into real computation. Arithmetic in CHIP-8 is strictly 8-bit. Every register (V0–VF) must behave as an unsigned 8-bit value.
 
-At this stage the emulator transitions from basic instruction flow into real computation. Arithmetic in CHIP-8 is strictly 8-bit. Every register (V0–VF) must behave as an unsigned 8-bit value. Any operation that exceeds this range must wrap around modulo 256.
+This is the moment you will finally have to worry about it.
 
-Incorrect arithmetic is one of the most common reasons otherwise functional emulators fail compatibility tests.
+That means that all results must wrap modulo 256.
 
-Instructions to Implement
+If your arithmetic is even slightly incorrect, many ROMs will behave unpredictably.
 
-7XNN – Add NN to VX (no carry flag modification)
-8XY0 – VX = VY
-8XY1 – VX = VX OR VY
-8XY2 – VX = VX AND VY
-8XY3 – VX = VX XOR VY
-8XY4 – VX = VX + VY, set VF = carry
-8XY5 – VX = VX − VY, set VF = NOT borrow
-8XY6 – Shift right
-8XY7 – VX = VY − VX, set VF = NOT borrow
-8XYE – Shift left
+---
 
-Critical Behavioral Details
+## Core Rule: 8-Bit Wrapping
 
-8-bit Wrapping
+All arithmetic results must be masked to 8 bits:
 
-All arithmetic results must be masked to 8 bits.
-Example: 255 + 1 becomes 0.
-Example: 0 − 1 becomes 255.
 
-Carry Logic (8XY4)
+result &= 0xFF
 
-If VX + VY > 255, then:
+
+Examples:
+
+- 255 + 1 → 0  
+- 0 - 1 → 255  
+
+Never allow values larger than 255 to remain in registers.
+
+Python, for example, will not automatically wrap integers. You must enforce it.
+
+Some of these operators will have a "Carry/Borrow flag", it simply means that the result of the sum or subtraction wrapped around the 255 or beyond 0.
+
+---
+
+# Instructions to Implement
+
+## 7XNN – Add NN to VX
+
+Behavior:
+
+
+VX = (VX + NN) & 0xFF
+
+Note: No Carry Flag yet, just wrap the result
+
+---
+
+# The 8XYZ instructions
+
+They can be a bit annoying to deal with because until now, the first digit defined the behavior, now you have to also check the last digit.
+
+
+## 8XY0 – VX = VY
+
+Simple assignment:
+
+
+VX = VY
+
+
+---
+
+## 8XY1 – OR
+
+
+VX = VX | VY
+
+
+
+---
+
+## 8XY2 – AND
+
+
+VX = VX & VY
+
+
+
+---
+
+## 8XY3 – XOR
+
+
+VX = VX ^ VY
+
+
+
+---
+
+## 8XY4 – Addition With Carry
+
+Here is when we have the carry flag, it will always be attributed to VF, the 16th register.
+
+After the operation is executed, VF should always be set to either 1 or 0.
+
+
+sum = VX + VY
+
+
+If:
+
+
+sum > 255
+
+
+Then:
+
+
 VF = 1
-Otherwise:
+
+
+Else:
+
+
 VF = 0
 
-The result stored in VX is truncated to 8 bits.
 
-Borrow Logic (8XY5, 8XY7)
+Store:
 
-For subtraction:
 
-VF = 1 if no borrow occurs
-VF = 0 if borrow occurs
+VX = sum & 0xFF
 
-Common mistake: comparing with “>” instead of “>=”.
 
-Shift Ambiguity
 
-There are two historical interpretations:
+---
 
-Modern interpreters:
-Shift VX directly.
+## 8XY5 – Subtract VY From VX
 
-Original COSMAC VIP behavior:
-Use VY as source and store result in VX.
 
-You must choose one implementation and document it. Silent mixing causes compatibility problems.
+VX = VX - VY
 
-Validation
 
-Create micro-ROM tests that:
+Borrow logic:
 
-Add values that overflow.
 
-Subtract values that underflow.
+VF = 1 if VX >= VY
+VF = 0 if VX < VY
 
-Confirm VF behavior explicitly.
 
-Shift values with MSB and LSB set.
+Common mistake:
 
-Confirm wraparound is correct in every case.
+Using `>` instead of `>=`.
 
-Common Mistakes
+Store:
 
-Forgetting to mask results to 8 bits.
 
-Incorrect borrow logic.
+VX = (VX - VY) & 0xFF
 
-Not clearing or setting VF explicitly.
 
-Letting Python integers exceed 255 silently.
+---
 
-Implementing only first-nibble matching without validating full opcode.
+## 8XY7 – VX = VY - VX
 
-Checkpoint Completion Criteria
+Reverse subtraction.
 
-All arithmetic behaves deterministically at edge values.
+Borrow logic:
 
-VF behaves correctly for add and subtract.
 
-Shift behavior is consistent and documented.
+VF = 1 if VY >= VX
+VF = 0 if VY < VX
 
-No silent overflow beyond 8-bit range.
+
+Store:
+
+
+VX = (VY - VX) & 0xFF
+
+
+---
+
+## Shift Instructions
+
+There is historical ambiguity.
+
+You must choose and document one behavior.
+
+### Modern Behavior (Recommended)
+
+Shifts operate directly on VX.
+
+### 8XY6 – Shift Right
+
+
+VF = VX & 0x1
+VX = VX >> 1
+
+
+LSB goes into VF.
+
+---
+
+### 8XYE – Shift Left
+
+
+VF = (VX >> 7) & 0x1
+VX = (VX << 1) & 0xFF
+
+
+MSB goes into VF.
+
+---
+
+## Critical Implementation Rules
+
+- Always mask results to 8 bits.
+- Always explicitly set VF when required.
+- Do not leave VF unchanged when instruction specifies behavior.
+- Validate full opcode (8XY? pattern), not just first nibble.
+
+---
+
+# Micro Test ROM Concepts
+
+You should build small test programs to verify:
+
+### Addition Overflow
+
+- Set VX = 255
+- Add 1 using 8XY4
+- Expect VX = 0, VF = 1
+
+### Subtraction Underflow
+
+- VX = 0
+- VY = 1
+- VX - VY
+- Expect VX = 255, VF = 0
+
+### No Borrow Case
+
+- VX = 5
+- VY = 5
+- VX - VY
+- Expect VX = 0, VF = 1
+
+### Shift Right
+
+- VX = 0b00000001
+- After shift:
+  - VX = 0
+  - VF = 1
+
+### Shift Left
+
+- VX = 0b10000000
+- After shift:
+  - VX = 0
+  - VF = 1
+
+If any of these fail, your ALU is incorrect.
+
+---
+
+# Common Mistakes
+
+- Forgetting to mask to 8 bits
+- Incorrect borrow logic
+- Not setting VF explicitly
+- Letting Python integers exceed 255
+- Ignoring opcode’s final nibble validation
+- Mixing COSMAC and modern shift behavior
+
+---
+
+# Checkpoint Completion Criteria
+
+You are complete when:
+
+- All arithmetic wraps correctly at 0 and 255
+- Carry logic works for addition
+- Borrow logic works for subtraction
+- Shift instructions correctly move MSB/LSB into VF
+- VF is deterministic and never stale
+- No register ever stores values outside 0–255
+
+At this point, your emulator has a functioning 8-bit ALU.
+
+You now support real computation.

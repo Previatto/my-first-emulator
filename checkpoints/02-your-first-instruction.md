@@ -110,6 +110,27 @@ Right now it is impossible to assign a value higher than 255 (FF in hex), but la
 
 ---
 
+
+## Instruction: BNNN (Jump with V0 Offset)
+
+
+**Behavior:**
+
+The program counter is set to the address `nnn` plus the value stored in register `V0`.
+
+This instruction behaves like a normal jump, but the final destination is offset by the value of `V0`. It is commonly used to implement simple jump tables or position-dependent control flow.
+
+Execution:
+
+PC = nnn + V0
+
+Notes:
+
+- `V0` is always used as the offset register.
+- The jump replaces the normal program counter progression.
+- No additional registers or flags are modified.
+
+
 ## Minimal Execution Loop
 
 You can now build *the* real loop:
@@ -142,7 +163,13 @@ Use the `rom_loading_test.ch8` again to check that:
 - Loops infinitely
 
 
-Registers 0 to 3 are loaded with values 10 to 13
+Registers 0 to 3 are loaded with values:
+- V0 = 2
+- V1 = 11
+- V2 = 12
+- V3 = 13
+
+No other register is set!
 
 Program counter keeps returning to the beggining
 

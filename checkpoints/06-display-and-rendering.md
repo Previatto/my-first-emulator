@@ -1,90 +1,275 @@
-Checkpoint 06 – Display and Sprite Rendering
+# Checkpoint 06 – Display and Sprite Rendering
 
-Objective
-Implement the 64×32 monochrome display and sprite drawing instruction.
+## Objective
 
-Overview
+Implement the 64×32 monochrome display and the `DXYN` sprite drawing instruction.
 
-CHIP-8 graphics are minimal but strict. The display is a 64 pixel wide by 32 pixel high grid. Each pixel is either 0 (off) or 1 (on). Rendering is performed exclusively through the DXYN instruction.
+This stage introduces:
 
-This stage introduces bit-level logic and collision detection.
+- Bit-level rendering
+- XOR pixel logic
+- Collision detection
+- Coordinate wrapping
 
-Instruction to Implement
+Graphics in CHIP-8 are simple but precise. Small mistakes produce visibly incorrect output.
 
-DXYN – Draw sprite at (VX, VY) with height N bytes.
 
-Behavior
+add instruction 00e0
+add instruction Annn
 
-Read N bytes starting at memory[I].
+---
 
-Each byte represents one horizontal row.
+## Display Model
 
-Each bit in the byte represents one pixel.
+Resolution:
 
-Pixels are drawn using XOR logic.
 
-If any pixel changes from 1 to 0, set VF = 1.
+Width = 64 pixels
+Height = 32 pixels
 
-Otherwise VF = 0.
 
-Technical Requirements
+Each pixel is:
 
-XOR Drawing
+- 0 → off
+- 1 → on
 
-Drawing toggles pixels. It does not overwrite.
+You may represent the display as:
 
-Bit Extraction
+Option A:
 
-Each row is 8 bits. You must test each bit individually, typically from MSB to LSB.
+display[32][64]
 
-Wrapping
 
-Sprites wrap around screen edges horizontally and vertically.
+Option B:
 
-Collision Flag
+display[2048]
 
-VF must be cleared before drawing.
-Set VF to 1 only if at least one pixel collision occurs.
 
-Display Representation
+Both are valid. Consistency in indexing is critical.
 
-Use either:
+---
 
-A 2D array [32][64]
-or
+# Instruction: DXYN
 
-A flat array of 2048 elements
+Draw a sprite at coordinates:
 
-Ensure coordinate indexing is consistent.
 
-Validation
+X = VX
+Y = VY
+Height = N
 
-Test using:
 
-IBM logo ROM
+---
 
-A custom sprite test at screen edges
+## How Sprite Data Works
 
-A collision test (draw sprite twice at same location)
+- Read **N bytes** starting at `memory[I]`.
+- Each byte represents one horizontal row.
+- Each bit in the byte represents one pixel.
+- Sprites are always 8 pixels wide.
 
-Expected Outcomes
+Example sprite byte:
 
-Sprite appears correctly.
 
-Drawing twice erases it.
+11110000
 
-VF reflects collision correctly.
 
-Wrapping behaves properly.
+Means:
 
-Common Mistakes
+- First 4 pixels ON
+- Next 4 pixels OFF
 
-Using OR instead of XOR.
+---
 
-Failing to reset VF before drawing.
+# Required Behavior
 
-Incorrect bit order (LSB/MSB confusion).
+## 1. Clear VF Before Drawing
 
-Forgetting modulo wrapping.
+Before starting:
 
-Indexing errors in 2D grid.
+
+VF = 0
+
+
+---
+
+## 2. Extract Each Bit (MSB First)
+
+For each row:
+
+
+sprite_byte = memory[I + row]
+
+
+For each column 0–7:
+
+
+bit = (sprite_byte >> (7 - col)) & 1
+
+
+MSB is drawn first.
+
+If you reverse bit order, the sprite will appear mirrored.
+
+---
+
+## 3. Apply XOR Logic
+
+Drawing rule:
+
+
+display_pixel ^= sprite_bit
+
+
+Important:
+
+- This toggles pixels.
+- It does NOT overwrite.
+- It does NOT use OR.
+
+---
+
+## 4. Collision Detection
+
+A collision occurs when:
+
+
+display_pixel == 1
+AND
+sprite_bit == 1
+
+
+If XOR turns a pixel from 1 → 0:
+
+
+VF = 1
+
+
+Set VF to 1 if at least one collision occurs.
+
+Do not reset VF back to 0 after a collision is detected.
+
+---
+
+## 5. Wrapping Behavior
+
+Coordinates must wrap around screen edges.
+
+Horizontal:
+
+
+x = (VX + col) % 64
+
+
+Vertical:
+
+
+y = (VY + row) % 32
+
+
+If you forget wrapping, sprites at screen edges will break.
+
+---
+
+# Full Logical Flow
+
+For each row in N:
+
+1. Read sprite byte
+2. For each of 8 bits:
+   - Extract bit (MSB first)
+   - Compute wrapped screen position
+   - Check collision
+   - Apply XOR
+
+That is the entire rendering model.
+
+---
+
+# Validation Strategy
+
+## Test 1 – Basic Drawing
+
+Draw a small sprite in center of screen.
+
+Confirm:
+
+- Shape appears correctly
+- No distortion
+- No flipping
+
+---
+
+## Test 2 – XOR Erase
+
+Draw sprite twice at same location.
+
+Expected:
+
+- First draw → visible
+- Second draw → erased
+- VF = 1 on second draw
+
+If sprite does not disappear, XOR logic is wrong.
+
+---
+
+## Test 3 – Edge Wrapping
+
+Draw sprite near:
+
+- X = 63
+- Y = 31
+
+Confirm wrapping:
+
+- Right edge wraps to left
+- Bottom wraps to top
+
+---
+
+## Test 4 – Collision Flag
+
+Draw sprite at same location twice.
+
+Expected:
+
+- First draw → VF = 0
+- Second draw → VF = 1
+
+If VF is incorrect, collision logic is wrong.
+
+---
+
+# Common Mistakes
+
+- Using OR instead of XOR
+- Forgetting to reset VF before drawing
+- Extracting bits LSB first
+- Not wrapping coordinates
+- Incorrect 2D indexing (row/column swapped)
+- Writing outside display bounds
+- Setting VF incorrectly for every collision instead of once
+
+---
+
+# Expected Outcomes
+
+You are correct when:
+
+- Sprites render cleanly
+- Drawing twice erases sprite
+- VF correctly indicates collision
+- Edge wrapping works perfectly
+- No array index errors occur
+
+At this point, your emulator can render graphics.
+
+You now support:
+
+- Full control flow
+- Arithmetic logic
+- Pixel rendering
+- Collision detection
+
+Your emulator is visually functional.
